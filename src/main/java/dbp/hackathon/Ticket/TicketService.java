@@ -104,8 +104,9 @@ public class TicketService {
     public boolean validarTicket(String qrCode) {
         // Buscar el ticket por el código QR
         Ticket ticket = ticketRepository.findByQr(qrCode);
-        if (ticket == null || ticket.getEstado() == Estado.CANJEADO) {
-            return false; // Ticket no existe o ya ha sido canjeado
+        if (ticket == null) {
+            System.err.println("Ticket no encontrado");
+            return false;
         }
 
         // Cambiar estado a "canjeado"
@@ -113,9 +114,17 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         // Enviar un correo de confirmación
-        emailService.sendConfirmationEmail(ticket.getEstudiante().getEmail(), ticket, ticket.getQr());
+        try {
+            emailService.sendConfirmationEmail(ticket.getEstudiante().getEmail(), ticket, ticket.getQr());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Error al enviar el correo: " + e.getMessage());
+            return false; // O devuelve false si prefieres indicar que hubo un error
+        }
 
         return true; // El ticket fue validado y canjeado
     }
+
+
 
 }

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
@@ -12,7 +14,7 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest request) {
+    public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest request) throws IOException, InterruptedException {
         Ticket newTicket = ticketService.createTicket(request.getEstudianteId(), request.getFuncionId(), request.getCantidad());
         return ResponseEntity.ok(newTicket);
     }
